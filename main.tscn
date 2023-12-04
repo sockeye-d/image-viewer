@@ -1,0 +1,129 @@
+[gd_scene load_steps=7 format=3 uid="uid://dc6xeg8obt1ds"]
+
+[ext_resource type="Script" path="res://main.gd" id="1_k2gak"]
+[ext_resource type="Shader" path="res://texture_filter.gdshader" id="2_5v4i4"]
+[ext_resource type="Texture2D" uid="uid://crt8t3yyf7ymf" path="res://icon.png" id="2_j4px5"]
+[ext_resource type="Shader" path="res://checkers.gdshader" id="2_qm3mt"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ds4ln"]
+shader = ExtResource("2_qm3mt")
+shader_parameter/color_a = Color(0.117647, 0.117647, 0.117647, 1)
+shader_parameter/color_b = Color(0.0862745, 0.0862745, 0.0862745, 1)
+shader_parameter/tile_size = 50.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_nvxnv"]
+shader = ExtResource("2_5v4i4")
+shader_parameter/filter = 2
+shader_parameter/tex = ExtResource("2_j4px5")
+
+[node name="Main" type="Control" node_paths=PackedStringArray("image")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_k2gak")
+image = NodePath("ScrollContainer/CenterContainer/TextureRect")
+
+[node name="FileDialog" type="FileDialog" parent="."]
+title = "Open a File"
+size = Vector2i(337, 159)
+ok_button_text = "Open"
+dialog_hide_on_ok = true
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.png, *.jpg, *.jpeg *.webp *.bmp ; Images")
+use_native_dialog = true
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch_mode = 3
+
+[node name="ColorRect" type="ColorRect" parent="AspectRatioContainer"]
+material = SubResource("ShaderMaterial_ds4ln")
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_scroll_mode = 3
+vertical_scroll_mode = 3
+
+[node name="CenterContainer" type="CenterContainer" parent="ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TextureRect" type="TextureRect" parent="ScrollContainer/CenterContainer"]
+material = SubResource("ShaderMaterial_nvxnv")
+custom_minimum_size = Vector2(0, 300)
+layout_mode = 2
+texture = ExtResource("2_j4px5")
+expand_mode = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="TopMenu" type="MenuBar" parent="MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+flat = true
+
+[node name="File" type="PopupMenu" parent="MarginContainer/TopMenu"]
+title = "File"
+item_count = 2
+item_0/text = "Paste"
+item_0/id = 0
+item_1/text = "Open"
+item_1/id = 1
+
+[node name="BottomMenu" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+
+[node name="PathLabel" type="Label" parent="MarginContainer/BottomMenu"]
+layout_mode = 2
+text = "path"
+
+[node name="MetaLabel" type="Label" parent="MarginContainer/BottomMenu"]
+layout_mode = 2
+text = "metadata"
+
+[node name="VSep" type="VSeparator" parent="MarginContainer/BottomMenu"]
+layout_mode = 2
+
+[node name="TextureFilterOptions" type="OptionButton" parent="MarginContainer/BottomMenu"]
+layout_mode = 2
+flat = true
+item_count = 3
+selected = 2
+popup/item_0/text = "Nearest/pixel art"
+popup/item_0/id = 0
+popup/item_1/text = "Linear"
+popup/item_1/id = 1
+popup/item_2/text = "Bicubic"
+popup/item_2/id = 2
+
+[connection signal="gui_input" from="ScrollContainer" to="." method="_on_scroll_container_gui_input"]
+[connection signal="index_pressed" from="MarginContainer/TopMenu/File" to="." method="_on_file_index_pressed"]
+[connection signal="item_selected" from="MarginContainer/BottomMenu/TextureFilterOptions" to="." method="_on_texture_filter_options_item_selected"]

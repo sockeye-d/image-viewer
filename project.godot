@@ -19,6 +19,10 @@ config/icon="res://icon.png"
 
 project/assembly_name="image-viewer"
 
+[gui]
+
+theme/default_font_multichannel_signed_distance_field=true
+
 [input]
 
 zoom_in={

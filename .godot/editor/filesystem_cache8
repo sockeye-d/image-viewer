@@ -1,3 +1,7 @@
 ea4bc82a6ad023ab7ee23ee620429895
-::res://::1701459869
+::res://::1701668230
+checkers.gdshader::Shader::-1::1701668222::0::1::::<><>::
 icon.png::CompressedTexture2D::6007313986232902477::1698700578::1698700590::1::::<><>::
+main.gd::GDScript::-1::1701668221::0::1::::<>Control<>::
+main.tscn::PackedScene::7365039449497325064::1701668221::0::1::::<><>::res://main.gd<>res://texture_filter.gdshader<>uid://crt8t3yyf7ymf::::res://icon.png<>res://checkers.gdshader
+texture_filter.gdshader::Shader::-1::1701668222::0::1::::<><>::

@@ -2,6 +2,11 @@ extends Control
 
 
 @export var image: TextureRect
+@export var path_str_from_clipboard: String
+@export var meta_str: String
+
+@onready var path_label: Label = %PathLabel
+@onready var meta_label: Label = %MetaLabel
 
 
 func _process(_delta: float) -> void:
@@ -19,8 +24,9 @@ func _on_file_index_pressed(index: int) -> void:
 
 func load_from_file() -> void:
 	$FileDialog.show()
-	var file = await $FileDialog.file_selected
+	var file: String = await $FileDialog.file_selected
 	if file:
+		path_label.text = file
 		var img = Image.new()
 		img.load(file)
 		var tex: ImageTexture = ImageTexture.create_from_image(img)
@@ -30,11 +36,17 @@ func load_from_file() -> void:
 func load_from_clipboard() -> void:
 	if DisplayServer.clipboard_has_image():
 		set_image(ImageTexture.create_from_image(DisplayServer.clipboard_get_image()))
+		path_label.text = path_str_from_clipboard
 
 
 func set_image(img: ImageTexture) -> void:
 	image.texture = img
 	image.material.set_shader_parameter ("tex", img)
+	meta_label.text = meta_str.format({
+			"w": img.get_width(),
+			"h": img.get_height(),
+			"f": img.get_format(),
+			})
 
 
 func _on_texture_filter_options_item_selected(index: int) -> void:
@@ -50,3 +62,11 @@ func _on_scroll_container_gui_input(event: InputEvent) -> void:
 			image_size += axis * 0.01
 			image_size = max(image_size, 0.01)
 			get_viewport().set_input_as_handled()
+
+
+func _on_clipboard_pressed() -> void:
+	DisplayServer.clipboard_set(path_label.text)
+
+
+func _on_always_on_top_toggle_toggled(toggled_on: bool) -> void:
+	get_window().always_on_top = toggled_on

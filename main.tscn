@@ -25,6 +25,8 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_k2gak")
 image = NodePath("ScrollContainer/CenterContainer/TextureRect")
+path_str_from_clipboard = "Copied from clipboard"
+meta_str = "{w}×{h}, {f}"
 
 [node name="FileDialog" type="FileDialog" parent="."]
 title = "Open a File"
@@ -84,12 +86,16 @@ theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 
-[node name="TopMenu" type="MenuBar" parent="MarginContainer"]
+[node name="TopMenu" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="TopMenu" type="MenuBar" parent="MarginContainer/TopMenu"]
 layout_mode = 2
 size_flags_vertical = 0
 flat = true
 
-[node name="File" type="PopupMenu" parent="MarginContainer/TopMenu"]
+[node name="File" type="PopupMenu" parent="MarginContainer/TopMenu/TopMenu"]
 title = "File"
 item_count = 2
 item_0/text = "Paste"
@@ -97,19 +103,32 @@ item_0/id = 0
 item_1/text = "Open"
 item_1/id = 1
 
+[node name="AlwaysOnTopToggle" type="CheckBox" parent="MarginContainer/TopMenu"]
+layout_mode = 2
+text = "Always on top"
+
 [node name="BottomMenu" type="HBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 size_flags_vertical = 8
 
 [node name="PathLabel" type="Label" parent="MarginContainer/BottomMenu"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "path"
 
+[node name="Clipboard" type="Button" parent="MarginContainer/BottomMenu"]
+layout_mode = 2
+text = "📋"
+
+[node name="VSep" type="VSeparator" parent="MarginContainer/BottomMenu"]
+layout_mode = 2
+
 [node name="MetaLabel" type="Label" parent="MarginContainer/BottomMenu"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "metadata"
 
-[node name="VSep" type="VSeparator" parent="MarginContainer/BottomMenu"]
+[node name="VSep2" type="VSeparator" parent="MarginContainer/BottomMenu"]
 layout_mode = 2
 
 [node name="TextureFilterOptions" type="OptionButton" parent="MarginContainer/BottomMenu"]
@@ -124,6 +143,11 @@ popup/item_1/id = 1
 popup/item_2/text = "Bicubic"
 popup/item_2/id = 2
 
+[node name="VSep3" type="VSeparator" parent="MarginContainer/BottomMenu"]
+layout_mode = 2
+
 [connection signal="gui_input" from="ScrollContainer" to="." method="_on_scroll_container_gui_input"]
-[connection signal="index_pressed" from="MarginContainer/TopMenu/File" to="." method="_on_file_index_pressed"]
+[connection signal="index_pressed" from="MarginContainer/TopMenu/TopMenu/File" to="." method="_on_file_index_pressed"]
+[connection signal="toggled" from="MarginContainer/TopMenu/AlwaysOnTopToggle" to="." method="_on_always_on_top_toggle_toggled"]
+[connection signal="pressed" from="MarginContainer/BottomMenu/Clipboard" to="." method="_on_clipboard_pressed"]
 [connection signal="item_selected" from="MarginContainer/BottomMenu/TextureFilterOptions" to="." method="_on_texture_filter_options_item_selected"]

@@ -1,4 +1,4 @@
-res://main.tscn
 res://main.gd
+res://main.tscn
 res://texture_filter.gdshader
 res://checkers.gdshader

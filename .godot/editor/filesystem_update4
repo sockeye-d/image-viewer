@@ -1,4 +1,11 @@
-res://main.gd
 res://main.tscn
 res://texture_filter.gdshader
 res://checkers.gdshader
+res://filedialog.gd
+res://filedialog_powershell_scripts.gd
+res://powershell_fd.gd
+res://ps_exec.gd
+res://powershell_fd.tscn
+res://main.gd
+res://ps_exec_result.gd
+res://test.tscn

@@ -1,9 +1,16 @@
-[gd_scene load_steps=7 format=3 uid="uid://dc6xeg8obt1ds"]
+[gd_scene load_steps=10 format=3 uid="uid://dc6xeg8obt1ds"]
 
+[ext_resource type="FontFile" uid="uid://mywedx5khv4d" path="res://assets/Dosis/static/Dosis-Regular.ttf" id="1_56rh0"]
 [ext_resource type="Script" path="res://main.gd" id="1_k2gak"]
 [ext_resource type="Shader" path="res://texture_filter.gdshader" id="2_5v4i4"]
 [ext_resource type="Texture2D" uid="uid://crt8t3yyf7ymf" path="res://icon.png" id="2_j4px5"]
 [ext_resource type="Shader" path="res://checkers.gdshader" id="2_qm3mt"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_71wf5"]
+
+[sub_resource type="Theme" id="Theme_brtke"]
+default_font = ExtResource("1_56rh0")
+Button/styles/focus = SubResource("StyleBoxEmpty_71wf5")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ds4ln"]
 shader = ExtResource("2_qm3mt")
@@ -23,20 +30,11 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = SubResource("Theme_brtke")
 script = ExtResource("1_k2gak")
 image = NodePath("ScrollContainer/CenterContainer/TextureRect")
 path_str_from_clipboard = "Copied from clipboard"
 meta_str = "{w}×{h}, {f}"
-
-[node name="FileDialog" type="FileDialog" parent="."]
-title = "Open a File"
-size = Vector2i(337, 159)
-ok_button_text = "Open"
-dialog_hide_on_ok = true
-file_mode = 0
-access = 2
-filters = PackedStringArray("*.png, *.jpg, *.jpeg *.webp *.bmp ; Images")
-use_native_dialog = true
 
 [node name="AspectRatioContainer" type="AspectRatioContainer" parent="."]
 layout_mode = 1
@@ -58,8 +56,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-horizontal_scroll_mode = 3
-vertical_scroll_mode = 3
 
 [node name="CenterContainer" type="CenterContainer" parent="ScrollContainer"]
 layout_mode = 2
@@ -105,33 +101,36 @@ item_1/id = 1
 
 [node name="AlwaysOnTopToggle" type="CheckBox" parent="MarginContainer/TopMenu"]
 layout_mode = 2
+action_mode = 0
 text = "Always on top"
 
-[node name="BottomMenu" type="HBoxContainer" parent="MarginContainer"]
+[node name="BottomMenuLeft" type="HBoxContainer" parent="MarginContainer"]
 layout_mode = 2
+size_flags_horizontal = 0
 size_flags_vertical = 8
 
-[node name="PathLabel" type="Label" parent="MarginContainer/BottomMenu"]
+[node name="PathButton" type="Button" parent="MarginContainer/BottomMenuLeft"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "path"
+flat = true
 
-[node name="Clipboard" type="Button" parent="MarginContainer/BottomMenu"]
-layout_mode = 2
-text = "📋"
-
-[node name="VSep" type="VSeparator" parent="MarginContainer/BottomMenu"]
+[node name="VSep" type="VSeparator" parent="MarginContainer/BottomMenuLeft"]
 layout_mode = 2
 
-[node name="MetaLabel" type="Label" parent="MarginContainer/BottomMenu"]
+[node name="MetaButton" type="Button" parent="MarginContainer/BottomMenuLeft"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "metadata"
+flat = true
 
-[node name="VSep2" type="VSeparator" parent="MarginContainer/BottomMenu"]
+[node name="BottomMenuRight" type="HBoxContainer" parent="MarginContainer"]
 layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+alignment = 2
 
-[node name="TextureFilterOptions" type="OptionButton" parent="MarginContainer/BottomMenu"]
+[node name="TextureFilterOptions" type="OptionButton" parent="MarginContainer/BottomMenuRight"]
 layout_mode = 2
 flat = true
 item_count = 3
@@ -143,11 +142,20 @@ popup/item_1/id = 1
 popup/item_2/text = "Bicubic"
 popup/item_2/id = 2
 
-[node name="VSep3" type="VSeparator" parent="MarginContainer/BottomMenu"]
+[node name="VSep3" type="VSeparator" parent="MarginContainer/BottomMenuRight"]
 layout_mode = 2
+
+[node name="Button" type="Button" parent="MarginContainer/BottomMenuRight"]
+layout_mode = 2
+text = "100%"
+
+[node name="FileDialog" type="NativeFileDialog" parent="."]
+title = "Open a File"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.png, *.jpg, *.jpeg, *.bmp, *.tga ; Images (*.png, *.jpg, *.jpeg, *.bmp, *.tga)")
 
 [connection signal="gui_input" from="ScrollContainer" to="." method="_on_scroll_container_gui_input"]
 [connection signal="index_pressed" from="MarginContainer/TopMenu/TopMenu/File" to="." method="_on_file_index_pressed"]
 [connection signal="toggled" from="MarginContainer/TopMenu/AlwaysOnTopToggle" to="." method="_on_always_on_top_toggle_toggled"]
-[connection signal="pressed" from="MarginContainer/BottomMenu/Clipboard" to="." method="_on_clipboard_pressed"]
-[connection signal="item_selected" from="MarginContainer/BottomMenu/TextureFilterOptions" to="." method="_on_texture_filter_options_item_selected"]
+[connection signal="item_selected" from="MarginContainer/BottomMenuRight/TextureFilterOptions" to="." method="_on_texture_filter_options_item_selected"]

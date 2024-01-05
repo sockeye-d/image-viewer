@@ -11,30 +11,38 @@ extends Control
 @onready var formats = ClassDB.class_get_enum_constants("Image", "Format")
 
 
-var image_size: float = 0.5
+var image_size: float = 1.0
 
 
 func _ready() -> void:
 	path_btn.pressed.connect(_on_clipboard_pressed.bind(path_btn))
 	meta_btn.pressed.connect(_on_clipboard_pressed.bind(meta_btn))
+	$MarginContainer/BottomMenuLeft.hide()
 
 
 func _process(_delta: float) -> void:
 	image.custom_minimum_size.y = image_size * get_rect().size.y
+	$MarginContainer/BottomMenuRight/ZoomButton.text = str(roundf(image_size * 100)) + "%"
+	
 
 
 func _on_file_index_pressed(index: int) -> void:
 	match index:
 		0:
-			load_from_clipboard()
-		1:
 			load_from_file()
+		1:
+			load_from_clipboard()
+		2:
+			$MarginContainer/TopMenu/TopMenu/File.set_item_checked(2, not $MarginContainer/TopMenu/TopMenu/File.is_item_checked(2))
+			get_window().always_on_top = $MarginContainer/TopMenu/TopMenu/File.is_item_checked(2)
 
 
 func load_from_file() -> void:
 	$FileDialog.show()
 	var file: String = await $FileDialog.file_selected
 	if file:
+		$MarginContainer/BottomMenuLeft/PathButton.show()
+		$MarginContainer/BottomMenuLeft/VSep.show()
 		path_btn.text = file
 		var img = Image.new()
 		img.load(file)
@@ -43,12 +51,15 @@ func load_from_file() -> void:
 
 
 func load_from_clipboard() -> void:
+	$MarginContainer/BottomMenuLeft/PathButton.hide()
+	$MarginContainer/BottomMenuLeft/VSep.hide()
 	if DisplayServer.clipboard_has_image():
 		set_image(ImageTexture.create_from_image(DisplayServer.clipboard_get_image()))
 		path_btn.text = path_str_from_clipboard
 
 
 func set_image(img: ImageTexture) -> void:
+	$MarginContainer/BottomMenuLeft.show()
 	image.texture = img
 	image.material.set_shader_parameter("tex", img)
 	meta_btn.text = meta_str.format({
@@ -64,7 +75,7 @@ func format_to_str(f: Image.Format) -> String:
 
 
 func _on_texture_filter_options_item_selected(index: int) -> void:
-	image.material.set_shader_parameter ("filter", index)
+	image.material.set_shader_parameter("filter", index)
 
 
 func _on_scroll_container_gui_input(event: InputEvent) -> void:
@@ -82,5 +93,6 @@ func _on_clipboard_pressed(btn: Button) -> void:
 	DisplayServer.clipboard_set(btn.text)
 
 
-func _on_always_on_top_toggle_toggled(toggled_on: bool) -> void:
-	get_window().always_on_top = toggled_on
+
+func _on_zoom_button_pressed() -> void:
+	image_size = 1.0

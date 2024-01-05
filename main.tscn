@@ -1,16 +1,11 @@
-[gd_scene load_steps=10 format=3 uid="uid://dc6xeg8obt1ds"]
+[gd_scene load_steps=9 format=3 uid="uid://dc6xeg8obt1ds"]
 
-[ext_resource type="FontFile" uid="uid://mywedx5khv4d" path="res://assets/Dosis/static/Dosis-Regular.ttf" id="1_56rh0"]
 [ext_resource type="Script" path="res://main.gd" id="1_k2gak"]
+[ext_resource type="Theme" uid="uid://b3l4pxhvi71gc" path="res://main.theme" id="1_r1djn"]
 [ext_resource type="Shader" path="res://texture_filter.gdshader" id="2_5v4i4"]
-[ext_resource type="Texture2D" uid="uid://crt8t3yyf7ymf" path="res://icon.png" id="2_j4px5"]
 [ext_resource type="Shader" path="res://checkers.gdshader" id="2_qm3mt"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_71wf5"]
-
-[sub_resource type="Theme" id="Theme_brtke"]
-default_font = ExtResource("1_56rh0")
-Button/styles/focus = SubResource("StyleBoxEmpty_71wf5")
+[ext_resource type="Texture2D" uid="uid://bv6djku4uwlwm" path="res://assets/default.png" id="5_f5u55"]
+[ext_resource type="Script" path="res://file_menu.gd" id="6_ep5gd"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ds4ln"]
 shader = ExtResource("2_qm3mt")
@@ -21,7 +16,7 @@ shader_parameter/tile_size = 50.0
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_nvxnv"]
 shader = ExtResource("2_5v4i4")
 shader_parameter/filter = 2
-shader_parameter/tex = ExtResource("2_j4px5")
+shader_parameter/tex = ExtResource("5_f5u55")
 
 [node name="Main" type="Control" node_paths=PackedStringArray("image")]
 layout_mode = 3
@@ -30,7 +25,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = SubResource("Theme_brtke")
+theme = ExtResource("1_r1djn")
 script = ExtResource("1_k2gak")
 image = NodePath("ScrollContainer/CenterContainer/TextureRect")
 path_str_from_clipboard = "Copied from clipboard"
@@ -66,7 +61,7 @@ size_flags_vertical = 3
 material = SubResource("ShaderMaterial_nvxnv")
 custom_minimum_size = Vector2(0, 300)
 layout_mode = 2
-texture = ExtResource("2_j4px5")
+texture = ExtResource("5_f5u55")
 expand_mode = 3
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
@@ -93,16 +88,17 @@ flat = true
 
 [node name="File" type="PopupMenu" parent="MarginContainer/TopMenu/TopMenu"]
 title = "File"
-item_count = 2
-item_0/text = "Paste"
-item_0/id = 0
-item_1/text = "Open"
-item_1/id = 1
-
-[node name="AlwaysOnTopToggle" type="CheckBox" parent="MarginContainer/TopMenu"]
-layout_mode = 2
-action_mode = 0
-text = "Always on top"
+size = Vector2i(133, 100)
+hide_on_checkable_item_selection = false
+item_count = 3
+item_0/text = "Open"
+item_0/id = 1
+item_1/text = "Paste"
+item_1/id = 0
+item_2/text = "Always on top"
+item_2/checkable = 1
+item_2/id = 2
+script = ExtResource("6_ep5gd")
 
 [node name="BottomMenuLeft" type="HBoxContainer" parent="MarginContainer"]
 layout_mode = 2
@@ -112,7 +108,7 @@ size_flags_vertical = 8
 [node name="PathButton" type="Button" parent="MarginContainer/BottomMenuLeft"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "path"
+text = "N/A"
 flat = true
 
 [node name="VSep" type="VSeparator" parent="MarginContainer/BottomMenuLeft"]
@@ -121,7 +117,7 @@ layout_mode = 2
 [node name="MetaButton" type="Button" parent="MarginContainer/BottomMenuLeft"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "metadata"
+text = "N/A"
 flat = true
 
 [node name="BottomMenuRight" type="HBoxContainer" parent="MarginContainer"]
@@ -145,8 +141,9 @@ popup/item_2/id = 2
 [node name="VSep3" type="VSeparator" parent="MarginContainer/BottomMenuRight"]
 layout_mode = 2
 
-[node name="Button" type="Button" parent="MarginContainer/BottomMenuRight"]
+[node name="ZoomButton" type="Button" parent="MarginContainer/BottomMenuRight"]
 layout_mode = 2
+tooltip_text = "Reset zoom"
 text = "100%"
 
 [node name="FileDialog" type="NativeFileDialog" parent="."]
@@ -157,5 +154,5 @@ filters = PackedStringArray("*.png, *.jpg, *.jpeg, *.bmp, *.tga ; Images (*.png,
 
 [connection signal="gui_input" from="ScrollContainer" to="." method="_on_scroll_container_gui_input"]
 [connection signal="index_pressed" from="MarginContainer/TopMenu/TopMenu/File" to="." method="_on_file_index_pressed"]
-[connection signal="toggled" from="MarginContainer/TopMenu/AlwaysOnTopToggle" to="." method="_on_always_on_top_toggle_toggled"]
 [connection signal="item_selected" from="MarginContainer/BottomMenuRight/TextureFilterOptions" to="." method="_on_texture_filter_options_item_selected"]
+[connection signal="pressed" from="MarginContainer/BottomMenuRight/ZoomButton" to="." method="_on_zoom_button_pressed"]

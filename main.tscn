@@ -150,7 +150,7 @@ text = "100%"
 title = "Open a File"
 file_mode = 0
 access = 2
-filters = PackedStringArray("*.png, *.jpg, *.jpeg, *.bmp, *.tga ; Images (*.png, *.jpg, *.jpeg, *.bmp, *.tga)")
+filters = PackedStringArray("*.png, *.jpg, *.jpeg, *.bmp, *.tga ; Images")
 
 [connection signal="gui_input" from="ScrollContainer" to="." method="_on_scroll_container_gui_input"]
 [connection signal="index_pressed" from="MarginContainer/TopMenu/TopMenu/File" to="." method="_on_file_index_pressed"]

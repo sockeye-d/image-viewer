@@ -12,12 +12,20 @@ extends Control
 
 
 var image_size: float = 1.0
+var file_filter: PackedStringArray
 
 
 func _ready() -> void:
 	path_btn.pressed.connect(_on_clipboard_pressed.bind(path_btn))
 	meta_btn.pressed.connect(_on_clipboard_pressed.bind(meta_btn))
+	get_window().files_dropped.connect(_on_window_files_dropped)
 	$MarginContainer/BottomMenuLeft.hide()
+	
+	file_filter = ($FileDialog.filters[0]
+			.split(";")[0] # Remove the filter label 
+			.replace(" ", "") # Remove all spaces between the types
+			.replace("*.", "") # Convert "*.png" into just "png"
+			.split(",")) # Split each type into an element
 
 
 func _process(_delta: float) -> void:
@@ -41,13 +49,17 @@ func load_from_file() -> void:
 	$FileDialog.show()
 	var file: String = await $FileDialog.file_selected
 	if file:
-		$MarginContainer/BottomMenuLeft/PathButton.show()
-		$MarginContainer/BottomMenuLeft/VSep.show()
-		path_btn.text = file
-		var img = Image.new()
-		img.load(file)
-		var tex: ImageTexture = ImageTexture.create_from_image(img)
-		set_image(tex)
+		set_image_from_file(file)
+
+
+func set_image_from_file(file: String) -> void:
+	$MarginContainer/BottomMenuLeft/PathButton.show()
+	$MarginContainer/BottomMenuLeft/VSep.show()
+	path_btn.text = file
+	var img = Image.new()
+	img.load(file)
+	var tex: ImageTexture = ImageTexture.create_from_image(img)
+	set_image(tex)
 
 
 func load_from_clipboard() -> void:
@@ -96,3 +108,9 @@ func _on_clipboard_pressed(btn: Button) -> void:
 
 func _on_zoom_button_pressed() -> void:
 	image_size = 1.0
+
+func _on_window_files_dropped(files: PackedStringArray) -> void:
+	var file = files[0]
+	var ext = file.split(".")[-1]
+	if ext in file_filter:
+		set_image_from_file(files[0])

@@ -1,16 +1,31 @@
 shader_type canvas_item;
 
-uniform sampler2D tex;
+uniform sampler2D tex : filter_linear_mipmap;
 uniform int filter;
 
-vec4 texture_nearest(sampler2D t, vec2 uv) {
-	vec2 size = vec2(textureSize(t, 0));
-	uv = round(uv * size) / size;
-	return texture(t, uv);
+float mip_level(vec2 uv, vec2 tex_size) {
+	vec2 dx = dFdx( uv * tex_size );
+	vec2 dy = dFdy( uv * tex_size );
+	float d = max( dot( dx, dx ), dot( dy, dy ) );
+	    
+	float mipLevel = 0.5 * log2(d);
+	mipLevel = floor(mipLevel);   
+
+	return max(0.0, mipLevel);
 }
 
-vec4 texture_linear(sampler2D t, vec2 uv) {
-	return texture(t, uv);
+vec4 texture_nearest(sampler2D t, vec2 uv, int lod) {
+	vec2 size = vec2(textureSize(t, lod));
+	uv = round(uv * size) / size;
+	return textureLod(t, uv, float(lod));
+}
+
+vec4 texture_nearest_lod(sampler2D t, vec2 uv, float lod) {
+	return mix(texture_nearest(t, uv, int(lod)), texture_nearest(t, uv, int(lod) + 1), fract(lod));
+}
+
+vec4 texture_linear(sampler2D t, vec2 uv, float lod) {
+	return textureLod(t, uv, lod);
 }
 
 vec4 cubic(float v)
@@ -24,9 +39,8 @@ vec4 cubic(float v)
     return vec4(x, y, z, w) * (1.0/6.0);
 }
 
-vec4 texture_bicubic(sampler2D sampler, vec2 texCoords)
+vec4 texture_bicubic(sampler2D sampler, vec2 texCoords, int lod)
 {
-	int lod = 0;
 	vec2 texSize = vec2(textureSize(sampler, lod));
 	vec2 invTexSize = 1.0 / texSize;
 
@@ -57,17 +71,22 @@ vec4 texture_bicubic(sampler2D sampler, vec2 texCoords)
 	return mix(mix(sample3, sample2, sx), mix(sample1, sample0, sx), sy);
 }
 
+vec4 texture_bicubic_lod(sampler2D sampler, vec2 texCoords, float lod) {
+	return mix(texture_bicubic(sampler, texCoords, int(lod)), texture_bicubic(sampler, texCoords, int(lod) + 1), fract(lod));
+}
+
 void fragment() {
+	float lod = mip_level(UV, vec2(textureSize(tex, 0)));
 	vec4 t;
 	switch(filter) {
 		case 0:
-			t = texture_nearest(tex, UV);
+			t = texture_nearest_lod(tex, UV, lod);
 			break;
 		case 1:
-			t = texture_linear(tex, UV);
+			t = texture_linear(tex, UV, lod);
 			break;
 		case 2:
-			t = texture_bicubic(tex, UV);
+			t = texture_bicubic_lod(tex, UV, lod);
 			break;
 	}
 	COLOR = t;

@@ -59,10 +59,11 @@ size_flags_vertical = 3
 
 [node name="TextureRect" type="TextureRect" parent="ScrollContainer/CenterContainer"]
 material = SubResource("ShaderMaterial_nvxnv")
-custom_minimum_size = Vector2(0, 300)
+custom_minimum_size = Vector2(300, 300)
 layout_mode = 2
 texture = ExtResource("5_f5u55")
 expand_mode = 3
+stretch_mode = 5
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -90,14 +91,16 @@ flat = true
 title = "File"
 size = Vector2i(133, 100)
 hide_on_checkable_item_selection = false
-item_count = 3
+item_count = 4
 item_0/text = "Open"
 item_0/id = 1
-item_1/text = "Paste"
-item_1/id = 0
-item_2/text = "Always on top"
-item_2/checkable = 1
-item_2/id = 2
+item_1/text = "Copy path"
+item_1/id = 3
+item_2/text = "Paste"
+item_2/id = 0
+item_3/text = "Always on top"
+item_3/checkable = 1
+item_3/id = 2
 script = ExtResource("6_ep5gd")
 
 [node name="BottomMenuLeft" type="HBoxContainer" parent="MarginContainer"]
@@ -146,13 +149,16 @@ layout_mode = 2
 tooltip_text = "Reset zoom"
 text = "100%"
 
-[node name="FileDialog" type="NativeFileDialog" parent="."]
+[node name="FileDialog" type="FileDialog" parent="."]
 title = "Open a File"
+ok_button_text = "Open"
 file_mode = 0
 access = 2
 filters = PackedStringArray("*.png, *.jpg, *.jpeg, *.bmp, *.tga ; Images")
+use_native_dialog = true
 
 [connection signal="gui_input" from="ScrollContainer" to="." method="_on_scroll_container_gui_input"]
 [connection signal="index_pressed" from="MarginContainer/TopMenu/TopMenu/File" to="." method="_on_file_index_pressed"]
 [connection signal="item_selected" from="MarginContainer/BottomMenuRight/TextureFilterOptions" to="." method="_on_texture_filter_options_item_selected"]
 [connection signal="pressed" from="MarginContainer/BottomMenuRight/ZoomButton" to="." method="_on_zoom_button_pressed"]
+[connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]

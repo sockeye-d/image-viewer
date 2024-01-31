@@ -12,7 +12,7 @@ extends Control
 
 
 var image_size: float = 1.0
-var file_filter: PackedStringArray
+var valid_exts: PackedStringArray
 
 
 func _ready() -> void:
@@ -21,14 +21,14 @@ func _ready() -> void:
 	get_window().files_dropped.connect(_on_window_files_dropped)
 	$MarginContainer/BottomMenuLeft.hide()
 	
-	file_filter = ($FileDialog.filters[0]
+	valid_exts = ($FileDialog.filters[0]
 			.split(";")[0] # Remove the filter label 
 			.replace(" ", "") # Remove all spaces between the types
 			.replace("*.", "") # Convert "*.png" into just "png"
 			.split(",")) # Split each type into an element
 	
 	for arg in OS.get_cmdline_args():
-		if _verify_path(arg):
+		if _get_ext(arg) in valid_exts:
 			set_image_from_file(arg)
 			break
 
@@ -36,8 +36,6 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	image.custom_minimum_size = image_size * get_rect().size
 	$MarginContainer/BottomMenuRight/ZoomButton.text = str(roundf(image_size * 100)) + "%"
-	if Input.is_action_just_released("ui_cancel"):
-		get_window().queue_free()
 
 
 func load_from_file() -> void:
@@ -85,9 +83,8 @@ func format_to_str(f: Image.Format) -> String:
 	return s.split("_")[1]
 
 
-func _verify_path(path: String) -> bool:
-	var ext = path.split(".")[-1]
-	return ext in file_filter
+func _get_ext(path: String) -> String:
+	return path.split(".")[-1]
 
 
 func _on_file_index_pressed(index: int) -> void:
@@ -130,11 +127,11 @@ func _on_zoom_button_pressed() -> void:
 
 func _on_window_files_dropped(files: PackedStringArray) -> void:
 	var file = files[0]
-	var ext = file.split(".")[-1]
-	if ext in file_filter:
+	if _get_ext(file) in valid_exts:
 		set_image_from_file(files[0])
 
 
 func _on_file_dialog_file_selected(path: String) -> void:
 	if path:
-		set_image_from_file(path)
+		if _get_ext(path) in valid_exts:
+			set_image_from_file(path)

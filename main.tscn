@@ -92,17 +92,18 @@ handle_input_locally = false
 title = "File"
 size = Vector2i(133, 100)
 hide_on_checkable_item_selection = false
-item_count = 4
+item_count = 3
 item_0/text = "Open"
 item_0/id = 1
 item_1/text = "Copy path"
 item_1/id = 3
 item_2/text = "Paste"
 item_2/id = 0
-item_3/text = "Always on top"
-item_3/checkable = 1
-item_3/id = 2
 script = ExtResource("6_ep5gd")
+
+[node name="CheckButton" type="CheckButton" parent="MarginContainer/TopMenu"]
+layout_mode = 2
+text = "Always on top"
 
 [node name="BottomMenuLeft" type="HBoxContainer" parent="MarginContainer"]
 layout_mode = 2
@@ -112,6 +113,7 @@ size_flags_vertical = 8
 [node name="PathButton" type="Button" parent="MarginContainer/BottomMenuLeft"]
 unique_name_in_owner = true
 layout_mode = 2
+tooltip_text = "Click to copy to clipboard"
 text = "N/A"
 flat = true
 
@@ -121,6 +123,7 @@ layout_mode = 2
 [node name="MetaButton" type="Button" parent="MarginContainer/BottomMenuLeft"]
 unique_name_in_owner = true
 layout_mode = 2
+tooltip_text = "Click to copy to clipboard"
 text = "N/A"
 flat = true
 
@@ -132,6 +135,7 @@ alignment = 2
 
 [node name="TextureFilterOptions" type="OptionButton" parent="MarginContainer/BottomMenuRight"]
 layout_mode = 2
+tooltip_text = "Texture filter type"
 flat = true
 item_count = 3
 selected = 2
@@ -162,6 +166,7 @@ use_native_dialog = true
 
 [connection signal="gui_input" from="ScrollContainer" to="." method="_on_scroll_container_gui_input"]
 [connection signal="index_pressed" from="MarginContainer/TopMenu/TopMenu/File" to="." method="_on_file_index_pressed"]
+[connection signal="toggled" from="MarginContainer/TopMenu/CheckButton" to="." method="_on_check_button_toggled"]
 [connection signal="item_selected" from="MarginContainer/BottomMenuRight/TextureFilterOptions" to="." method="_on_texture_filter_options_item_selected"]
 [connection signal="pressed" from="MarginContainer/BottomMenuRight/ZoomButton" to="." method="_on_zoom_button_pressed"]
 [connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]

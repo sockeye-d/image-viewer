@@ -95,9 +95,6 @@ func _on_file_index_pressed(index: int) -> void:
 			DisplayServer.clipboard_set(path_btn.text)
 		2:
 			load_from_clipboard()
-		3:
-			$MarginContainer/TopMenu/TopMenu/File.set_item_checked(2, not $MarginContainer/TopMenu/TopMenu/File.is_item_checked(2))
-			get_window().always_on_top = $MarginContainer/TopMenu/TopMenu/File.is_item_checked(2)
 
 
 func _on_texture_filter_options_item_selected(index: int) -> void:
@@ -135,3 +132,7 @@ func _on_file_dialog_file_selected(path: String) -> void:
 	if path:
 		if _get_ext(path) in valid_exts:
 			set_image_from_file(path)
+
+
+func _on_check_button_toggled(toggled_on: bool) -> void:
+	get_window().always_on_top = toggled_on
